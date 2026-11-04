@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10172a">
+<title>POYRAZ BROWSER</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#263b70,#10172a 58%);color:#fff;padding:22px}
+main{max-width:650px;margin:7vh auto 0;text-align:center}
+.logo{font-size:58px;margin-bottom:8px}
+h1{font-size:clamp(28px,7vw,42px);margin:0;letter-spacing:1px}
+.owner{color:#b8c9ff;margin:10px 0 30px}
+form{display:flex;gap:8px;background:#fff;padding:7px;border-radius:18px;box-shadow:0 10px 35px #0005}
+input{min-width:0;flex:1;border:0;outline:0;padding:13px;color:#17213b;font-size:16px;border-radius:12px}
+button{border:0;border-radius:12px;background:#5579ff;color:white;padding:0 18px;font-size:16px;font-weight:bold}
+.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
+a.tile{display:block;text-decoration:none;color:white;background:#ffffff14;border:1px solid #ffffff26;border-radius:15px;padding:17px}
+a.tile b{display:block;font-size:18px;margin-bottom:5px}
+small{color:#c4cce2}
+h2{font-size:17px;margin:30px 0 10px}
+#saved{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+#saved a{color:#dce5ff;background:#ffffff16;padding:9px 12px;border-radius:20px;text-decoration:none}
+.note{font-size:12px;color:#aab6d2;line-height:1.5;margin-top:30px}
+</style>
+</head>
+<body>
+<main>
+  <div class="logo">🌐</div>
+  <h1>POYRAZ BROWSER</h1>
+  <div class="owner">👑 Sahibi: POYRAZ</div>
+  <form id="searchForm">
+    <input id="query" type="text" placeholder="İnternette ara veya site adresi yaz..." autocomplete="off" aria-label="Arama veya site adresi">
+    <button type="submit">Git</button>
+  </form>
+  <div class="links">
+    <a class="tile" href="https://www.google.com" target="_blank" rel="noopener"><b>🔎 Google</b><small>İnternette ara</small></a>
+    <a class="tile" href="https://www.youtube.com" target="_blank" rel="noopener"><b>▶ YouTube</b><small>Videoları izle</small></a>
+    <a class="tile" href="https://www.wikipedia.org" target="_blank" rel="noopener"><b>📚 Wikipedia</b><small>Bilgi keşfet</small></a>
+    <a class="tile" href="https://www.roblox.com" target="_blank" rel="noopener"><b>🎮 Roblox</b><small>Oyun dünyası</small></a>
+  </div>
+  <h2>⭐ Yer imlerin</h2>
+  <div id="saved"><small>Henüz yer imi eklenmedi.</small></div>
+  <p class="note">Bir siteyi yer imlerine eklemek için adresini yazıp “Yer imi ekle” düğmesine bas. Bu, kişisel başlangıç sayfandır; tam bağımsız tarayıcı uygulaması değildir. Siteler yeni sekmede açılır.</p>
+  <button id="bookmark" type="button" style="margin-top:14px;padding:12px 18px">⭐ Yer imi ekle</button>
+</main>
+<script>
+const q=document.getElementById('query');
+function target(value){
+  const s=value.trim(); if(!s)return null;
+  if(/^https?:\/\//i.test(s)) return s;
+  if(/^[\w-]+(\.[\w-]+)+([/?#].*)?$/i.test(s) && !s.includes(' ')) return 'https://'+s;
+  return 'https://www.google.com/search?q='+encodeURIComponent(s);
+}
+document.getElementById('searchForm').addEventListener('submit',e=>{
+  e.preventDefault(); const url=target(q.value); if(url) window.open(url,'_blank','noopener');
+});
+function load(){
+  const items=JSON.parse(localStorage.getItem('poyrazBookmarks')||'[]');
+  const box=document.getElementById('saved'); box.innerHTML='';
+  if(!items.length){box.innerHTML='<small>Henüz yer imi eklenmedi.</small>';return;}
+  items.forEach(item=>{const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener';a.textContent=item.name;box.appendChild(a);});
+}
+document.getElementById('bookmark').addEventListener('click',()=>{
+  const url=target(q.value); if(!url){alert('Önce bir site adresi yaz.');return;}
+  const name=prompt('Yer imi adı:',q.value.trim()); if(!name)return;
+  const items=JSON.parse(localStorage.getItem('poyrazBookmarks')||'[]');
+  if(!items.some(x=>x.url===url)){items.push({name,url});localStorage.setItem('poyrazBookmarks',JSON.stringify(items));}
+  load();
+});
+load();
+</script>
+</body>
+</html>
